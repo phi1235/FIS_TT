@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:18.0.2
+    command: ["start-dev", "--http-port=8080"]
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    ports:
+      - "8080:8080"
+    volumes:
+      # Mount all custom themes; inside contains /custom/login/...
+      - ./keycloak-theme:/opt/keycloak/themes
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/realms/master"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  spring-api:
+    build:
+      context: ./spring-boot-keycloak
+      dockerfile: Dockerfile
+    environment:
+      KEYCLOAK_AUTH_SERVER_URL: http://keycloak:8080
+      SERVER_PORT: 8082
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    ports:
+      - "8082:8082"
+
+  angular-app:
+    build:
+      context: ./my-angular-app
+      dockerfile: Dockerfile
+    depends_on:
+      - keycloak
+    ports:
+      - "4200:80"
+
+networks:
+  default:
+    name: keycloak-demo-net
+

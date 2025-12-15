@@ -1,0 +1,68 @@
+server:
+  port: 8082
+  # Request size limiting (bank-level security)
+  max-http-header-size: 8KB
+  max-http-post-size: 1MB
+  tomcat:
+    max-swallow-size: 1MB
+    max-connections: 200
+    threads:
+      max: 200
+      min-spare: 10
+
+spring:
+  application:
+    name: keycloak-integration
+  # Request body size limiting
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 5MB
+      file-size-threshold: 1MB
+  
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+keycloak:
+  realm: phi-realm
+  auth-server-url: http://localhost:8080
+  resource: spring-boot-app
+  bearer-only: true
+
+# Security Configuration (Bank-Level)
+security:
+  ip:
+    # IP Whitelisting (chỉ cho phép IP trong danh sách)
+    whitelist:
+      enabled: false  # Set true để bật whitelist mode
+      # Ví dụ: "192.168.1.1,10.0.0.0/8,172.16.0.0/12"
+      # Hỗ trợ CIDR notation: "192.168.1.0/24"
+    whitelist: ""
+    # IP Blacklisting (chặn các IP trong danh sách)
+    # Ví dụ: "192.168.1.100,10.0.0.50"
+    blacklist: ""
+
+logging:
+  level:
+    org.keycloak: DEBUG
+    org.springframework.security: DEBUG
+    # Audit logging
+    AUDIT: INFO
+

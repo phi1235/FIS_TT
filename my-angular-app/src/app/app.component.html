@@ -1,0 +1,18 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <a routerLink="/home" class="nav-logo">Angular UI</a>
+    <div class="nav-links">
+      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Trang Chủ</a>
+      <a routerLink="/sign" routerLinkActive="active">Đăng Ký</a>
+      <div class="user-section" *ngIf="isAuthenticated && userProfile">
+        <span class="user-name">{{ userProfile.username }}</span>
+        <button class="btn-logout" (click)="logout()">Đăng Xuất</button>
+      </div>
+      <button class="btn-login" *ngIf="!isAuthenticated" (click)="login()">Đăng Nhập</button>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <router-outlet></router-outlet>
+</main>
