@@ -1,2 +1,7 @@
 .env
+keycloak-18.0.2/
+keycloak-18.0.2.tar.gz
+keycloak-providers/
+spring-boot-keycloak/target/
+my-angular-app/node_modules/
 
